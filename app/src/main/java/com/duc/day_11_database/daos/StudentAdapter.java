@@ -25,7 +25,7 @@ public class StudentAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return <StudentDTO>this.students.get(position);
+        return this.students.get(position);
     }
 
     @Override
@@ -41,13 +41,14 @@ public class StudentAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.item, parent, false);
 
         }
-        TextView txtId = convertView.findViewById(R.id.txtTitle);
-
-
+        //Map Control
+        TextView txtId = convertView.findViewById(R.id.txtId);
         TextView textName = convertView.findViewById(R.id.txtName);
-
         TextView txtMark = convertView.findViewById(R.id.txtMark);
-
-        return null;
+        StudentDTO dto = students.get(position);
+        txtId.setText(dto.getId());
+        textName.setText(dto.getName());
+        txtMark.setText(String.valueOf(dto.getMark()));
+        return convertView;
     }
 }

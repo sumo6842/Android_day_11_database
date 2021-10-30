@@ -1,23 +1,35 @@
 package com.duc.day_11_database;
 
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.duc.day_11_database.daos.StudentAdapter;
+import com.duc.day_11_database.daos.StudentDAO;
 import com.duc.day_11_database.databinding.ActivityMainBinding;
+import com.duc.day_11_database.dtos.StudentDTO;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    private TextView txtTitle;
+    private ListView listViewStudent;
+    private StudentAdapter adapter;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
@@ -63,4 +75,28 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+
+    public void clickToLoadFromRaw(MenuItem item) {
+
+        txtTitle = findViewById(R.id.txtTitle);
+
+        listViewStudent = findViewById(R.id.listViewStudent);
+        adapter = new StudentAdapter();
+        try (InputStream is = getResources().openRawResource(R.raw.data)) {
+            txtTitle.setText("List Student From Raw");
+            StudentDAO dao = new StudentDAO();
+            List<StudentDTO> listStudent = dao.loadDataFromRaw(is);
+            adapter.setStudents(listStudent);
+            listViewStudent.setAdapter(adapter);
+            listViewStudent.setOnItemClickListener((parent, view, position, id) -> {
+                StudentDTO dto = (StudentDTO) listViewStudent.getItemAtPosition(position);
+                Toast.makeText(MainActivity.this, dto.toString(), Toast.LENGTH_SHORT).show();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
